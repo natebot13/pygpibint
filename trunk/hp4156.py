@@ -9,7 +9,6 @@ Copyright (c) 2009 Vanderbilt University. All rights reserved.
 """
 
 # TODO debug the errors which occur during runtime. (They don't seem to be show-stopping, but are of concern for completeness.)
-# TODO Work on the returning of data from the PA.
 
 import sys, os
 from data_acquisition import vxi_11
@@ -139,7 +138,7 @@ class hp4156(vxi_11.vxi_11_connection):
 	def single(self):
 		"""Performs a single sweep/measurement/thing."""
 		self.write(":PAGE:SCON:SING")
-		self.write("*OPC?")
+		self.write("*WAI?")
 		pass
 	
 	def visualizeTwoYs(self, x, y1, y2):
