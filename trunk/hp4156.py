@@ -126,6 +126,7 @@ class hp4156(vxi_11.vxi_11_connection):
 		arg is intended to be a object (tuple/list) of strings containing data of interest to the operator. example usage:
 		arg = ('VD','VS','VG','ID','IS','IG')
 		myData = daq(arg)
+		myData is then in a nice CSV accessible format.
 		"""
 		self.argData = []
 		self.stuff = self.daqStringMod(arg) # Fix this
@@ -133,7 +134,13 @@ class hp4156(vxi_11.vxi_11_connection):
 			self.write(":DATA? %s" % i)
 			self.fluff = self.read()
 			self.argData.append(self.fluff[2:])
-		return self.argData
+		self.tempList=[]
+		for i in self.argData:
+			self.t=i[0].split('\n')[0]
+			self.temp=self.t.split(',')
+			self.tempList.append(self.temp)
+		self.fluff = self.merger(self.tempList)
+		return self.fluff
 	
 	def single(self):
 		"""Performs a single sweep/measurement/thing."""
@@ -203,4 +210,16 @@ class hp4156(vxi_11.vxi_11_connection):
 		self.write(":PAGE:STR:%s:MODE %s" % (term,mode))
 		self.write(":PAGE:STR:SET:CONS:%s %s" % (term,value))
 		pass
+	
+	def merger(*lists):
+		"""Combines any number of lists of equal length."""
+		merged=[]
+		print len(lists[0])
+		print len(lists[0][0])
+		for i in range(len(lists[0][0])):
+			temp=[]
+			for j in range(len(lists[0])):
+				temp.append(lists[0][j][i])
+			merged.append(temp)
+		return merged
 	
