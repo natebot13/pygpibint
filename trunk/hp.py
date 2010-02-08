@@ -129,7 +129,7 @@ class hp4156(vxi_11.vxi_11_connection):
 	def single(self):
 		"""Performs a single sweep/measurement/thing."""
 		self.write(":PAGE:SCON:SING")
-		self.write("*OPC?")
+		self.write("*WAI?")
 		pass
 	
 	def visualizeTwoYs(self, xname, xscal, xmin, xmax, y1name, y1scal, y1min, y1max, y2name, y2scal, y2min, y2max):
