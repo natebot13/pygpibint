@@ -9,6 +9,8 @@ Copyright (c) 2009 Vanderbilt University. All rights reserved.
 """
 
 # TODO debug the errors which occur during runtime. (They don't seem to be show-stopping, but are of concern for completeness.)
+# TODO Test single() waiting to continue issuing commands.
+# TODO Test daq() returning CSV friendly data structures.
 
 import sys, os
 from data_acquisition import vxi_11
@@ -145,7 +147,7 @@ class hp4156(vxi_11.vxi_11_connection):
 	def single(self):
 		"""Performs a single sweep/measurement/thing."""
 		self.write(":PAGE:SCON:SING")
-		self.write("*WAI?")
+		self.write("*WAI")
 		pass
 	
 	def visualizeTwoYs(self, x, y1, y2):
@@ -211,15 +213,13 @@ class hp4156(vxi_11.vxi_11_connection):
 		self.write(":PAGE:STR:SET:CONS:%s %s" % (term,value))
 		pass
 	
-	def merger(*lists):
+	def merger(self, *lists):
 		"""Combines any number of lists of equal length."""
-		merged=[]
-		print len(lists[0])
-		print len(lists[0][0])
+		self.merged=[]
 		for i in range(len(lists[0][0])):
-			temp=[]
+			self.temp=[]
 			for j in range(len(lists[0])):
-				temp.append(lists[0][j][i])
-			merged.append(temp)
-		return merged
+				self.temp.append(lists[0][j][i])
+			self.merged.append(self.temp)
+		return self.merged
 	
