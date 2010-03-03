@@ -9,8 +9,6 @@ Copyright (c) 2009 Vanderbilt University. All rights reserved.
 """
 
 # TODO debug the errors which occur during runtime. (They don't seem to be show-stopping, but are of concern for completeness.)
-# TODO Test single() waiting to continue issuing commands.
-# TODO Test daq() returning CSV friendly data structures.
 
 import sys, os
 from data_acquisition import vxi_11
@@ -18,7 +16,7 @@ from data_acquisition import vxi_11
 class hp4156(vxi_11.vxi_11_connection):
 	def __init__(self, host, device="gpib0,17", raise_on_err=1, timeout=180000,device_name="HP 4156A"):
 		"""
-		Initiates a connection to host ip address, which is a string argument given to hp4156. ie x = hp4156("127.0.0.1"). 
+		Initiates a connection to host ip address, which is a string argument given to hp4156. ie x = hp4156(host="127.0.0.1"). 
 		
 		Standard configuration for gpib is declared and initialized on instantiation of the class. It may be necessary to confirm these setting for the parameter analyzer if there are problems connecting to the equipment.
 		"""
@@ -66,12 +64,14 @@ class hp4156(vxi_11.vxi_11_connection):
 		self.write(self.smuSetup[0] % self.arg2[0])
 		self.write(self.smuSetup[1] % self.arg2[1])
 		self.write(self.smuSetup[2] % self.arg2[2])
+		self.write(":PAGE:DISP:LIST %s" % self.arg2[2])
 		self.write(self.smuSetup[3] % self.arg2[3])
 		if arg2[1] != "VAR1" and arg2[1] != "VAR2" and arg2[3] != "COMM" and arg2[1] != "VAR1\'":
 			self.write(self.smuSetup[4] % arg2[4])
 			self.write(self.smuSetup[5] % arg2[5])
 		pass
 		
+	
 	def disableSmu(self, arg):
 		"""
 		Disables the specified unit: valid arguments are: VSU1, VSU2, VMU1, VMU2, SMU1, SMU2, SMU3, SMU4. Parameter arg is a list of valid arguements.
@@ -203,8 +203,11 @@ class hp4156(vxi_11.vxi_11_connection):
 	def abort(self):
 		pass
 	
-	def stress(self, term, func, mode, name, value=0.0, duration=100000):
-		"""Sets up the stress conditions for the 4156."""
+	def stress(self, term, func, mode, name, value=0.0, duration=0):
+		"""
+		Sets up the stress conditions for the 4156.
+		Default duration is free-run, no time limit to applied stress.
+		"""
 		self.name=self.varStringMod(name)
 		self.write(":PAGE:STR:SET:DUR %s" % duration)
 		self.write(":PAGE:STR:%s:NAME %s" % (term,self.name))
